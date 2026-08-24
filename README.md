@@ -26,6 +26,21 @@ representative records from the City of Cologne's public fuel-station dataset.
 Existing records with the same external ID are updated only when their source
 data has changed.
 
+## Import live station data
+
+After applying the migrations, synchronize the complete official Cologne
+dataset:
+
+```bash
+cd backend
+npm run stations:import
+```
+
+The importer validates and paginates the ArcGIS response, upserts stations by
+their external ID, records every import attempt, and deactivates missing records
+only after a complete successful download. See
+`backend/src/database/docs/station-import.md` for details.
+
 ## Backend checks
 
 ```bash

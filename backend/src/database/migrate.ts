@@ -1,11 +1,15 @@
 import "dotenv/config";
 import { closeDatabasePool, getDatabasePool } from "./client.js";
 import { createStationsMigration } from "./migrations/001-create-stations.js";
+import { addStationImportTrackingMigration } from "./migrations/002-add-station-import-tracking.js";
 import type { Migration } from "./migrations/types.js";
 
 const MIGRATION_LOCK_NAME = "fuel-station-finder:migrations";
 
-const migrations: Migration[] = [createStationsMigration];
+const migrations: Migration[] = [
+  createStationsMigration,
+  addStationImportTrackingMigration,
+];
 
 async function migrate(): Promise<void> {
   const client = await getDatabasePool().connect();

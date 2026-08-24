@@ -10,7 +10,9 @@
     "db:migrate": "node --import tsx src/database/migrate.ts",
     "db:migrate:prod": "node dist/database/migrate.js",
     "db:seed": "node --import tsx src/database/seed.ts",
-    "db:seed:prod": "node dist/database/seed.js"
+    "db:seed:prod": "node dist/database/seed.js",
+    "stations:import": "node --import tsx src/jobs/import-stations.ts",
+    "stations:import:prod": "node dist/jobs/import-stations.js"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +22,8 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "pg": "^8.23.0"
+    "pg": "^8.23.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

@@ -11,22 +11,33 @@ async function seed(): Promise<void> {
     for (const station of exampleStations) {
       await client.query(
         `
-          INSERT INTO stations (external_id, address, location)
+          INSERT INTO stations (
+            external_id,
+            address,
+            location,
+            is_active,
+            last_seen_at
+          )
           VALUES (
             $1,
             $2,
-            ST_SetSRID(ST_MakePoint($3, $4), 4326)::geography
+            ST_SetSRID(ST_MakePoint($3, $4), 4326)::geography,
+            TRUE,
+            CURRENT_TIMESTAMP
           )
           ON CONFLICT (external_id) DO UPDATE
           SET
             address = EXCLUDED.address,
-            location = EXCLUDED.location
+            location = EXCLUDED.location,
+            is_active = TRUE,
+            last_seen_at = CURRENT_TIMESTAMP
           WHERE
             stations.address IS DISTINCT FROM EXCLUDED.address
             OR NOT ST_Equals(
               stations.location::geometry,
               EXCLUDED.location::geometry
             )
+            OR stations.is_active = FALSE
         `,
         [
           station.externalId,
