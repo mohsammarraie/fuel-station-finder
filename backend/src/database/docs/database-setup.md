@@ -14,17 +14,17 @@ This feature provides:
 - A spatially indexed `stations` table
 - A TypeScript station model
 - Repeatable example data
+- Tracked live-data synchronization
 - Tests and setup documentation
 
-It does **not** yet download the complete live dataset. Fetching and synchronizing
-the official ArcGIS JSON endpoint belongs in the next `station-import` feature.
+The live importer is documented separately in `station-import.md`.
 
 ## Architecture
 
 ```text
 Official Cologne ArcGIS endpoint
                |
-               |  Future import/synchronization job
+               |  Validated import/synchronization job
                v
        PostgreSQL + PostGIS
                |
@@ -206,8 +206,8 @@ Future migrations should use increasing numbers, for example:
 
 ```text
 001-create-stations.ts
-002-create-import-runs.ts
-003-add-station-active-status.ts
+002-add-station-import-tracking.ts
+003-next-schema-change.ts
 ```
 
 ## Stations schema
@@ -220,6 +220,8 @@ stations
 |-- external_id
 |-- address
 |-- location
+|-- is_active
+|-- last_seen_at
 |-- created_at
 `-- updated_at
 ```
@@ -232,8 +234,10 @@ stations
 | `external_id` | Integer, unique | `objectid` from the source system |
 | `address` | Text | Complete source address |
 | `location` | Geography point | Longitude and latitude in EPSG:4326 |
+| `is_active` | Boolean | Whether the record still exists upstream |
+| `last_seen_at` | Timestamp with timezone | Most recent successful source observation |
 | `created_at` | Timestamp with timezone | Local creation time |
-| `updated_at` | Timestamp with timezone | Last local update time |
+| `updated_at` | Timestamp with timezone | Last source-data or active-state change |
 
 The external `objectid` is deliberately not used as the primary key. Keeping an
 internal ID gives the application control of its own identity model while the
@@ -248,7 +252,9 @@ The database rejects:
 - Longitudes outside -180 to 180
 - Latitudes outside -90 to 90
 
-An update trigger automatically refreshes `updated_at` when a station changes.
+An update trigger refreshes `updated_at` when the address, location, or active
+state changes. Updating only `last_seen_at` does not falsely report a source-data
+change.
 
 ### Indexes
 
@@ -361,6 +367,9 @@ The feature was checked by:
 - Reading longitude and latitude back from PostGIS
 - Running the unit test
 - Compiling the TypeScript backend
+- Applying the import-tracking migration
+- Importing all 122 live records twice without duplicates
+- Confirming 122 active stations and two successful import-run records
 
 ## Continuous integration
 
@@ -373,19 +382,7 @@ After the workflow has run on GitHub for the first time, the `Backend` and
 `Frontend` jobs should be configured as required status checks in the branch
 protection rules for `main`.
 
-## Current limitations and next feature
+## Next feature
 
-The next feature should implement the live station importer. It should:
-
-1. Fetch the official ArcGIS JSON endpoint.
-2. Validate the response structure and each record.
-3. Request EPSG:4326 coordinates with `outSR=4326`.
-4. Handle ArcGIS pagination even though the current dataset is small.
-5. Upsert stations by `external_id` in a transaction.
-6. Track when synchronization started, completed, or failed.
-7. Only deactivate missing stations after a complete successful download.
-8. Run manually and on a configurable schedule.
-9. Log imported, updated, skipped, and deactivated record counts.
-
-After the importer, the following feature can add the station-list API with
-address search, sorting, and 2/5/10-kilometre radius filters.
+The next feature can add the station-list API with address search, ascending or
+descending sorting, and 2/5/10-kilometre radius filters.
