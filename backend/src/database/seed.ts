@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { logger } from "../logger.js";
 import { closeDatabasePool, getDatabasePool } from "./client.js";
 import { exampleStations } from "./seeds/example-stations.js";
 
@@ -49,7 +50,10 @@ async function seed(): Promise<void> {
     }
 
     await client.query("COMMIT");
-    console.log(`Seeded ${exampleStations.length} example stations.`);
+    logger.info(
+      { stationCount: exampleStations.length },
+      "Example stations seeded",
+    );
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;
@@ -61,7 +65,7 @@ async function seed(): Promise<void> {
 try {
   await seed();
 } catch (error) {
-  console.error("Database seed failed", error);
+  logger.error({ err: error }, "Database seed failed");
   process.exitCode = 1;
 } finally {
   await closeDatabasePool();

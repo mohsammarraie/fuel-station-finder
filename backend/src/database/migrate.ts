@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { logger } from "../logger.js";
 import { closeDatabasePool, getDatabasePool } from "./client.js";
 import { createStationsMigration } from "./migrations/001-create-stations.js";
 import { addStationImportTrackingMigration } from "./migrations/002-add-station-import-tracking.js";
@@ -45,7 +46,10 @@ async function migrate(): Promise<void> {
           [migration.version, migration.name],
         );
         await client.query("COMMIT");
-        console.log(`Applied migration ${migration.version}: ${migration.name}`);
+        logger.info(
+          { migrationName: migration.name, migrationVersion: migration.version },
+          "Database migration applied",
+        );
       } catch (error) {
         await client.query("ROLLBACK");
         throw error;
@@ -62,7 +66,7 @@ async function migrate(): Promise<void> {
 try {
   await migrate();
 } catch (error) {
-  console.error("Database migration failed", error);
+  logger.error({ err: error }, "Database migration failed");
   process.exitCode = 1;
 } finally {
   await closeDatabasePool();
