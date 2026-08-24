@@ -1,12 +1,16 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Express backend for the fuel station finder",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --import tsx --test src/**/*.test.ts",
+    "db:migrate": "node --import tsx src/database/migrate.ts",
+    "db:migrate:prod": "node dist/database/migrate.js",
+    "db:seed": "node --import tsx src/database/seed.ts",
+    "db:seed:prod": "node dist/database/seed.js"
   },
   "keywords": [],
   "author": "",
@@ -15,12 +19,14 @@
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "pg": "^8.23.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^26.2.0",
+    "@types/pg": "^8.23.1",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
   }
