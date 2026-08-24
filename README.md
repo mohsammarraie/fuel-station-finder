@@ -41,6 +41,23 @@ their external ID, records every import attempt, and deactivates missing records
 only after a complete successful download. See
 `backend/src/database/docs/station-import.md` for details.
 
+## Station API
+
+Retrieve all active stations:
+
+```http
+GET /api/stations
+```
+
+Combine street search, sorting, and radius filtering:
+
+```http
+GET /api/stations?search=Bonner&sort=asc&lat=50.94&lng=6.96&radius=5
+```
+
+The allowed radii are 2, 5, and 10 kilometres. See
+`backend/src/database/docs/station-api.md` for the complete contract.
+
 ## Backend checks
 
 ```bash
