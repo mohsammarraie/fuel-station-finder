@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { CologneStationClient } from "../clients/cologne-station-client.js";
 import { closeDatabasePool } from "../database/client.js";
+import { logger } from "../logger.js";
 import { StationImportService } from "../services/station-import-service.js";
 
 function readPageSize(value: string | undefined): number | undefined {
@@ -24,16 +25,17 @@ try {
   });
   const summary = await new StationImportService(sourceClient).run();
 
-  console.log(
-    [
-      `Station import ${summary.runId} succeeded.`,
-      `Fetched: ${summary.fetchedCount}.`,
-      `Upserted: ${summary.upsertedCount}.`,
-      `Deactivated: ${summary.deactivatedCount}.`,
-    ].join(" "),
+  logger.info(
+    {
+      runId: summary.runId,
+      fetchedCount: summary.fetchedCount,
+      upsertedCount: summary.upsertedCount,
+      deactivatedCount: summary.deactivatedCount,
+    },
+    "Station import succeeded",
   );
 } catch (error) {
-  console.error("Station import failed", error);
+  logger.error({ err: error }, "Station import failed");
   process.exitCode = 1;
 } finally {
   await closeDatabasePool();

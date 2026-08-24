@@ -39,7 +39,7 @@ npm run stations:import
 The importer validates and paginates the ArcGIS response, upserts stations by
 their external ID, records every import attempt, and deactivates missing records
 only after a complete successful download. See
-`backend/src/database/docs/station-import.md` for details.
+`backend/docs/station-import.md` for details.
 
 ## Station API
 
@@ -56,7 +56,15 @@ GET /api/stations?search=Bonner&sort=asc&lat=50.94&lng=6.96&radius=5
 ```
 
 The allowed radii are 2, 5, and 10 kilometres. See
-`backend/src/database/docs/station-api.md` for the complete contract.
+`backend/docs/station-api.md` for the complete contract.
+
+## Backend logging
+
+Backend requests and application events are written as structured JSON logs.
+Every response includes an `X-Request-Id`; an incoming ID is preserved when
+valid, otherwise the backend generates one. Set `LOG_LEVEL` in
+the backend environment to control verbosity. See `backend/docs/logging.md` for
+details.
 
 ## Backend checks
 

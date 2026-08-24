@@ -1,10 +1,12 @@
 import express from "express";
 import cors from "cors";
+import { requestLogger } from "./logger.js";
 import { createStationRouter } from "./routes/station-routes.js";
 
 const app = express();
 
 app.disable("x-powered-by");
+app.use(requestLogger);
 app.use(cors());
 app.use(express.json());
 
@@ -28,11 +30,11 @@ app.use((_req, res) => {
 app.use(
   (
     error: unknown,
-    _req: express.Request,
+    req: express.Request,
     res: express.Response,
     _next: express.NextFunction,
   ) => {
-    console.error("Unhandled request error", error);
+    req.log.error({ err: error }, "Unhandled request error");
     res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",

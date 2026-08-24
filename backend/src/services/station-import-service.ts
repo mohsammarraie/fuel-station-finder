@@ -1,6 +1,7 @@
 import type { PoolClient } from "pg";
 import type { CologneStationClient } from "../clients/cologne-station-client.js";
 import { getDatabasePool } from "../database/client.js";
+import { logger } from "../logger.js";
 
 const IMPORT_LOCK_NAME = "fuel-station-finder:station-import";
 const MAX_ERROR_MESSAGE_LENGTH = 2_000;
@@ -117,7 +118,7 @@ export class StationImportService {
             IMPORT_LOCK_NAME,
           ]);
         } catch (error) {
-          console.error("Failed to release station import lock", error);
+          logger.error({ err: error }, "Failed to release station import lock");
         }
       }
 
