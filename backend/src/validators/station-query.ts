@@ -3,14 +3,14 @@ import { z } from "zod";
 export const ALLOWED_RADII_KM = [2, 5, 10] as const;
 
 export type AllowedRadiusKm = (typeof ALLOWED_RADII_KM)[number];
-export type StationSortDirection = "asc" | "desc";
+export type StationSort = "asc" | "desc" | "nearest" | "farthest";
 
 export interface StationListFilters {
   latitude?: number;
   longitude?: number;
   radiusKm?: AllowedRadiusKm;
   search?: string;
-  sort: StationSortDirection;
+  sort: StationSort;
 }
 
 const numericString = z
@@ -48,7 +48,7 @@ export const stationQuerySchema = z
       .max(100, "Must contain at most 100 characters.")
       .optional()
       .transform((value) => value || undefined),
-    sort: z.enum(["asc", "desc"]).default("asc"),
+    sort: z.enum(["asc", "desc", "nearest", "farthest"]).default("asc"),
   })
   .strict()
   .superRefine((query, context) => {
@@ -62,6 +62,17 @@ export const stationQuerySchema = z
         code: "custom",
         message: "lat, lng, and radius must be provided together.",
         path: ["location"],
+      });
+    }
+
+    if (
+      (query.sort === "nearest" || query.sort === "farthest") &&
+      providedCount !== locationValues.length
+    ) {
+      context.addIssue({
+        code: "custom",
+        message: "Distance sorting requires lat, lng, and radius.",
+        path: ["sort"],
       });
     }
   })

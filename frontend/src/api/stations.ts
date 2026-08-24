@@ -14,12 +14,12 @@ export interface StationListResponse {
   }
 }
 
-export type StationSortDirection = 'asc' | 'desc'
+export type StationSort = 'asc' | 'desc' | 'nearest' | 'farthest'
 export type StationRadiusKm = 2 | 5 | 10
 
 export interface StationFilters {
   search?: string
-  sort?: StationSortDirection
+  sort?: StationSort
   latitude?: number
   longitude?: number
   radiusKm?: StationRadiusKm

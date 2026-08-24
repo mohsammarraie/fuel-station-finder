@@ -10,19 +10,22 @@ GET /api/stations
 ```
 
 The endpoint always returns active stations. Query parameters can optionally add
-street searching, address sorting, and geographic radius filtering.
+street searching, address or distance sorting, and geographic radius filtering.
 
 ## Query parameters
 
 | Parameter | Required | Values | Purpose |
 | --- | --- | --- | --- |
 | `search` | No | Up to 100 characters | Case-insensitive partial address search |
-| `sort` | No | `asc`, `desc` | Address order; defaults to `asc` |
+| `sort` | No | `asc`, `desc`, `nearest`, `farthest` | Address or distance order; defaults to `asc` |
 | `lat` | As a location group | -90 to 90 | Search-centre latitude |
 | `lng` | As a location group | -180 to 180 | Search-centre longitude |
 | `radius` | As a location group | `2`, `5`, `10` | Radius in kilometres |
 
 `lat`, `lng`, and `radius` must either all be present or all be omitted.
+`nearest` and `farthest` require all three location parameters because distance
+needs a reference position. Equal distances are ordered by address and then by
+station ID so the result order remains stable.
 
 Unknown query parameters are rejected so misspellings cannot silently change
 the meaning of a request.
@@ -55,6 +58,15 @@ GET /api/stations?sort=desc
 ```http
 GET /api/stations?lat=50.94&lng=6.96&radius=5
 ```
+
+### Nearest stations first
+
+```http
+GET /api/stations?lat=50.94&lng=6.96&radius=5&sort=nearest
+```
+
+Use `sort=farthest` with the same location parameters to return the farthest
+stations inside the selected radius first.
 
 ### Combined filters
 
@@ -114,6 +126,7 @@ GET /api/stations?radius=5
 GET /api/stations?lat=91&lng=6.96&radius=5
 GET /api/stations?lat=50.94&lng=6.96&radius=3
 GET /api/stations?sort=random
+GET /api/stations?sort=nearest
 GET /api/stations?serach=Bonner
 ```
 
@@ -163,8 +176,10 @@ Because both values are PostGIS geography objects, distances are calculated in
 metres over the earth rather than as flat longitude/latitude differences. The
 GiST location index supports the radius predicate.
 
-Only the validated sort direction is inserted into the SQL syntax. All search,
-coordinate, and radius values remain query parameters.
+Only a validated sort option is used to select a fixed SQL ordering clause.
+Distance sorting uses the calculated `distance_km` result, while address and
+distance ties have deterministic fallback fields. All search, coordinate, and
+radius values remain query parameters.
 
 ## Response design
 
@@ -189,7 +204,8 @@ Automated tests cover:
 - Unsupported-radius rejection
 - Parameterized PostGIS SQL generation
 - SQL wildcard escaping
-- Ascending and descending ordering
+- Ascending and descending address ordering
+- Nearest and farthest distance ordering
 - Controller success responses
 - Structured validation errors
 
