@@ -362,6 +362,17 @@ The feature was checked by:
 - Running the unit test
 - Compiling the TypeScript backend
 
+## Continuous integration
+
+The repository's `.github/workflows/ci.yml` workflow runs for pull requests to
+`main` and pushes to `main`. Its backend job starts a PostGIS service and checks
+dependency installation, tests, compilation, migration repeatability, and seed
+repeatability. A separate frontend job verifies its production build.
+
+After the workflow has run on GitHub for the first time, the `Backend` and
+`Frontend` jobs should be configured as required status checks in the branch
+protection rules for `main`.
+
 ## Current limitations and next feature
 
 The next feature should implement the live station importer. It should:
@@ -378,4 +389,3 @@ The next feature should implement the live station importer. It should:
 
 After the importer, the following feature can add the station-list API with
 address search, sorting, and 2/5/10-kilometre radius filters.
-

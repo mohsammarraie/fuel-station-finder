@@ -33,3 +33,17 @@ cd backend
 npm test
 npm run build
 ```
+
+## Continuous integration
+
+GitHub Actions runs the following checks for every pull request targeting
+`main`, and again after changes are pushed to `main`:
+
+- Backend dependency installation, tests, and TypeScript build
+- Database migration and repeatability check against PostGIS
+- Example-data seed and repeatability check
+- Frontend dependency installation and production build
+
+The workflow is defined in `.github/workflows/ci.yml`. Configure the `Backend`
+and `Frontend` jobs as required status checks in the GitHub branch-protection
+settings before enforcing pull-request merges.
