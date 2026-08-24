@@ -1,16 +1,30 @@
 <script setup lang="ts">
 import AppHeader from './components/AppHeader.vue'
+import StationFilters from './components/StationFilters.vue'
 import StationList from './components/StationList.vue'
 import { useStations } from './composables/useStations'
 
-const { stations, viewState, resultAnnouncement, loadStations } = useStations()
+const {
+  stations,
+  viewState,
+  resultAnnouncement,
+  applyFilters,
+  resetFilters,
+  retry,
+} = useStations()
 </script>
 
 <template>
   <div class="app-shell bg-body-tertiary">
     <AppHeader />
 
-    <main id="main-content" class="container py-5" tabindex="-1">
+    <main id="main-content" class="container py-4" tabindex="-1">
+      <StationFilters
+        :disabled="viewState === 'loading'"
+        @apply="applyFilters"
+        @reset="resetFilters"
+      />
+
       <section aria-labelledby="station-heading">
         <p class="visually-hidden" aria-live="polite" aria-atomic="true">
           {{ resultAnnouncement }}
@@ -20,7 +34,7 @@ const { stations, viewState, resultAnnouncement, loadStations } = useStations()
         >
           <div>
             <p class="eyebrow">Standorte</p>
-            <h2 id="station-heading" class="fw-bold mb-0">Alle Tankstellen</h2>
+            <h2 id="station-heading" class="fw-bold mb-0">Tankstellen</h2>
           </div>
           <span
             v-if="viewState === 'success'"
@@ -49,7 +63,7 @@ const { stations, viewState, resultAnnouncement, loadStations } = useStations()
         >
           <h3 class="h6 fw-bold">Die Tankstellen konnten nicht geladen werden.</h3>
           <p>Prüfe die Verbindung und versuche es erneut.</p>
-          <button type="button" class="btn btn-success" @click="loadStations">
+          <button type="button" class="btn btn-success" @click="retry">
             Erneut versuchen
           </button>
         </div>
@@ -60,7 +74,7 @@ const { stations, viewState, resultAnnouncement, loadStations } = useStations()
         >
           <h3 class="h6 fw-bold mb-1">Keine Tankstellen gefunden</h3>
           <p class="text-body-secondary mb-0">
-            Zurzeit sind keine aktiven Standorte verfügbar.
+            Für diese Auswahl wurden keine Tankstellen gefunden.
           </p>
         </div>
 

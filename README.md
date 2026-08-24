@@ -84,8 +84,10 @@ npm run dev
 ```
 
 Vite forwards `/api` requests to the backend. The frontend displays active
-stations with loading, empty, and retryable error states. See
-`frontend/docs/station-list.md` for details.
+stations with loading, empty, and retryable error states. Street search,
+address sorting, and optional 2/5/10-kilometre radius filtering are available
+through the filter form. See `frontend/docs/station-list.md` and
+`frontend/docs/station-filters.md` for details.
 
 Frontend checks run with:
 

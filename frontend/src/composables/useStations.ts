@@ -1,11 +1,12 @@
 import { computed, onBeforeUnmount, onMounted, readonly, ref } from 'vue'
-import { getStations, type Station } from '../api/stations'
+import { getStations, type Station, type StationFilters } from '../api/stations'
 
 export type StationViewState = 'loading' | 'success' | 'empty' | 'error'
 
 export function useStations() {
   const stations = ref<Station[]>([])
   const viewState = ref<StationViewState>('loading')
+  let activeFilters: StationFilters = {}
   let requestController: AbortController | undefined
 
   const resultAnnouncement = computed(() => {
@@ -20,13 +21,16 @@ export function useStations() {
     return ''
   })
 
-  async function loadStations(): Promise<void> {
+  async function requestStations(): Promise<void> {
     requestController?.abort()
     requestController = new AbortController()
     viewState.value = 'loading'
 
     try {
-      const response = await getStations({ signal: requestController.signal })
+      const response = await getStations({
+        filters: activeFilters,
+        signal: requestController.signal,
+      })
       stations.value = response.data
       viewState.value = response.data.length > 0 ? 'success' : 'empty'
     } catch (error) {
@@ -38,13 +42,25 @@ export function useStations() {
     }
   }
 
-  onMounted(loadStations)
+  function applyFilters(filters: StationFilters): Promise<void> {
+    activeFilters = { ...filters }
+    return requestStations()
+  }
+
+  function resetFilters(): Promise<void> {
+    activeFilters = {}
+    return requestStations()
+  }
+
+  onMounted(requestStations)
   onBeforeUnmount(() => requestController?.abort())
 
   return {
     stations: readonly(stations),
     viewState: readonly(viewState),
     resultAnnouncement,
-    loadStations,
+    applyFilters,
+    resetFilters,
+    retry: requestStations,
   }
 }

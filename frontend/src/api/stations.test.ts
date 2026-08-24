@@ -1,5 +1,21 @@
 import { describe, expect, it, vi } from 'vitest'
-import { getStations, StationApiError } from './stations'
+import { buildStationUrl, getStations, StationApiError } from './stations'
+
+describe('buildStationUrl', () => {
+  it('serializes combined station filters', () => {
+    expect(
+      buildStationUrl({
+        search: 'Bonner Str.',
+        sort: 'desc',
+        latitude: 50.94,
+        longitude: 6.96,
+        radiusKm: 10,
+      }),
+    ).toBe(
+      '/api/stations?search=Bonner+Str.&sort=desc&lat=50.94&lng=6.96&radius=10',
+    )
+  })
+})
 
 describe('getStations', () => {
   it('requests and returns the station list', async () => {
