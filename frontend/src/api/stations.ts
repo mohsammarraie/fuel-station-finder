@@ -14,7 +14,19 @@ export interface StationListResponse {
   }
 }
 
+export type StationSortDirection = 'asc' | 'desc'
+export type StationRadiusKm = 2 | 5 | 10
+
+export interface StationFilters {
+  search?: string
+  sort?: StationSortDirection
+  latitude?: number
+  longitude?: number
+  radiusKm?: StationRadiusKm
+}
+
 export interface GetStationsOptions {
+  filters?: StationFilters
   signal?: AbortSignal
   request?: typeof fetch
 }
@@ -33,11 +45,36 @@ export class StationApiError extends Error {
 
 const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
 
+export function buildStationUrl(filters: StationFilters = {}): string {
+  const parameters = new URLSearchParams()
+
+  if (filters.search) {
+    parameters.set('search', filters.search)
+  }
+
+  if (filters.sort) {
+    parameters.set('sort', filters.sort)
+  }
+
+  if (
+    filters.latitude !== undefined &&
+    filters.longitude !== undefined &&
+    filters.radiusKm !== undefined
+  ) {
+    parameters.set('lat', String(filters.latitude))
+    parameters.set('lng', String(filters.longitude))
+    parameters.set('radius', String(filters.radiusKm))
+  }
+
+  const query = parameters.toString()
+  return `${apiBaseUrl}/api/stations${query ? `?${query}` : ''}`
+}
+
 export async function getStations(
   options: GetStationsOptions = {},
 ): Promise<StationListResponse> {
   const request = options.request ?? fetch
-  const response = await request(`${apiBaseUrl}/api/stations`, {
+  const response = await request(buildStationUrl(options.filters), {
     headers: { Accept: 'application/json' },
     signal: options.signal,
   })

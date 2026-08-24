@@ -5,7 +5,7 @@
 
   <header class="hero">
     <nav
-      class="container d-flex align-items-center justify-content-between py-4"
+      class="container d-flex align-items-center justify-content-between py-2"
       aria-label="Hauptnavigation"
     >
       <a
@@ -24,12 +24,12 @@
 
     <div class="hero__content container position-relative">
       <p class="eyebrow">Schnell ans Ziel</p>
-      <h1 class="display-2 fw-bold">
-        Tankstellen in Köln<br /><span>auf einen Blick.</span>
+      <h1 class="display-5 fw-bold">
+        Tankstellen in Köln <span>auf einen Blick.</span>
       </h1>
-      <p class="hero__intro lead mb-0">
-        Entdecke Tankstellen im Kölner Stadtgebiet – übersichtlich, aktuell und
-        basierend auf offenen Verwaltungsdaten.
+      <p class="hero__intro mb-0">
+        Finde Tankstellen im Kölner Stadtgebiet – aktuell und auf Basis offener
+        Daten.
       </p>
     </div>
     <div class="hero__shape" aria-hidden="true"></div>

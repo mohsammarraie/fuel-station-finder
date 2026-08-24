@@ -21,5 +21,6 @@ npm test
 npm run build
 ```
 
-See [`docs/station-list.md`](docs/station-list.md) for the current feature
-contract and project structure.
+See [`docs/station-list.md`](docs/station-list.md) for the list structure and
+[`docs/station-filters.md`](docs/station-filters.md) for search, sorting, and
+radius filtering.
