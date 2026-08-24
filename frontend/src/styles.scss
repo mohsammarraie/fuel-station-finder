@@ -1,0 +1,171 @@
+@use './styles/colors';
+
+:root {
+  font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.skip-link:focus {
+  position: fixed;
+  z-index: 10;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  color: colors.$white;
+  background: colors.$brand;
+}
+
+.hero {
+  position: relative;
+  min-height: 420px;
+  overflow: hidden;
+  color: colors.$hero-text;
+  background: colors.$brand;
+
+  &__content {
+    z-index: 1;
+    padding-block: 4rem 5.5rem;
+  }
+
+  &__intro {
+    max-width: 570px;
+    color: colors.$hero-muted;
+    line-height: 1.7;
+  }
+
+  &__shape {
+    position: absolute;
+    right: -130px;
+    bottom: -300px;
+    width: 600px;
+    height: 600px;
+    border: 100px solid rgba(colors.$accent, 0.08);
+    border-radius: 50%;
+  }
+
+  h1 {
+    max-width: 750px;
+    margin-bottom: 1.4rem;
+    line-height: 0.98;
+    letter-spacing: -0.055em;
+
+    span {
+      color: colors.$accent;
+    }
+  }
+
+  .eyebrow {
+    color: colors.$accent;
+  }
+}
+
+.brand {
+  z-index: 1;
+  color: colors.$white;
+  font-weight: 600;
+
+  &:hover {
+    color: colors.$white;
+  }
+
+  &:focus-visible {
+    border-radius: 0.25rem;
+    outline: 3px solid colors.$accent;
+    outline-offset: 4px;
+  }
+
+  strong {
+    color: colors.$accent;
+  }
+
+  &__icon {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border-radius: 0.65rem;
+    color: colors.$brand;
+    background: colors.$accent;
+    font-weight: 800;
+  }
+}
+
+.source-badge {
+  z-index: 1;
+  color: colors.$source-text;
+  border: 1px solid rgba(colors.$white, 0.18);
+  background: rgba(colors.$white, 0.07);
+}
+
+.source-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 0.4rem;
+  border-radius: 50%;
+  background: colors.$online;
+}
+
+.eyebrow {
+  margin-bottom: 0.75rem;
+  color: colors.$label;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.station-card {
+  transition: transform 160ms ease, box-shadow 160ms ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.75rem 2rem rgba(colors.$shadow, 0.1) !important;
+  }
+}
+
+.station-marker {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 0.8rem;
+  color: colors.$station;
+  background: colors.$station-soft;
+
+  svg {
+    width: 23px;
+    fill: currentcolor;
+  }
+}
+
+.distance-badge {
+  color: colors.$station !important;
+}
+
+.state-card {
+  min-height: 210px;
+}
+
+@media (max-width: 576px) {
+  .source-badge {
+    display: none;
+  }
+
+  .hero {
+    min-height: 390px;
+
+    &__content {
+      padding-block: 3.5rem 4.5rem;
+    }
+  }
+}

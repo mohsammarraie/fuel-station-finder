@@ -74,6 +74,27 @@ npm test
 npm run build
 ```
 
+## Frontend development
+
+With the backend running on port `3000`, start the Vue development server:
+
+```bash
+cd frontend
+npm run dev
+```
+
+Vite forwards `/api` requests to the backend. The frontend displays active
+stations with loading, empty, and retryable error states. See
+`frontend/docs/station-list.md` for details.
+
+Frontend checks run with:
+
+```bash
+cd frontend
+npm test
+npm run build
+```
+
 ## Continuous integration
 
 GitHub Actions runs the following checks for every pull request targeting
@@ -82,7 +103,7 @@ GitHub Actions runs the following checks for every pull request targeting
 - Backend dependency installation, tests, and TypeScript build
 - Database migration and repeatability check against PostGIS
 - Example-data seed and repeatability check
-- Frontend dependency installation and production build
+- Frontend dependency installation, tests, and production build
 
 The workflow is defined in `.github/workflows/ci.yml`. Configure the `Backend`
 and `Frontend` jobs as required status checks in the GitHub branch-protection

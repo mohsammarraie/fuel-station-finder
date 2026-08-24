@@ -1,5 +1,25 @@
-# Vue 3 + TypeScript + Vite
+# Fuel Station Finder frontend
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Vue 3 and TypeScript frontend for browsing fuel stations in Cologne, styled
+with Bootstrap 5 and a small custom SCSS layer.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+## Development
+
+Start the backend on port `3000`, then run:
+
+```bash
+npm install
+npm run dev
+```
+
+Vite proxies `/api` requests to the backend during development.
+
+## Checks
+
+```bash
+npm test
+npm run build
+```
+
+See [`docs/station-list.md`](docs/station-list.md) for the current feature
+contract and project structure.
