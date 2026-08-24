@@ -15,6 +15,17 @@ describe('buildStationUrl', () => {
       '/api/stations?search=Bonner+Str.&sort=desc&lat=50.94&lng=6.96&radius=10',
     )
   })
+
+  it('serializes distance sorting with its reference location', () => {
+    expect(
+      buildStationUrl({
+        sort: 'nearest',
+        latitude: 50.94,
+        longitude: 6.96,
+        radiusKm: 5,
+      }),
+    ).toBe('/api/stations?sort=nearest&lat=50.94&lng=6.96&radius=5')
+  })
 })
 
 describe('getStations', () => {

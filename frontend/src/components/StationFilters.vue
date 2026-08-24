@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type {
   StationFilters,
   StationRadiusKm,
-  StationSortDirection,
+  StationSort,
 } from '../api/stations'
 
 defineProps<{ disabled?: boolean }>()
@@ -14,13 +14,19 @@ const emit = defineEmits<{
 }>()
 
 const search = ref('')
-const sort = ref<StationSortDirection>('asc')
+const sort = ref<StationSort>('asc')
 const locationEnabled = ref(false)
 const latitude = ref('50.9375')
 const longitude = ref('6.9603')
 const radiusKm = ref<StationRadiusKm>(5)
 const locating = ref(false)
 const locationError = ref('')
+
+watch(locationEnabled, (enabled) => {
+  if (!enabled && (sort.value === 'nearest' || sort.value === 'farthest')) {
+    sort.value = 'asc'
+  }
+})
 
 function apply(): void {
   const filters: StationFilters = { sort: sort.value }
@@ -105,6 +111,12 @@ function useCurrentLocation(): void {
         >
           <option value="asc">Straße aufsteigend (A–Z)</option>
           <option value="desc">Straße absteigend (Z–A)</option>
+          <option value="nearest" :disabled="!locationEnabled">
+            Entfernung: nächste zuerst
+          </option>
+          <option value="farthest" :disabled="!locationEnabled">
+            Entfernung: weiteste zuerst
+          </option>
         </select>
       </div>
     </div>

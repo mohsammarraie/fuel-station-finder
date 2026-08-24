@@ -37,6 +37,44 @@ describe('StationFilters', () => {
     ])
   })
 
+  it('offers distance sorting only with an active location filter', async () => {
+    const { emitted } = render(StationFilters)
+    const nearestOption = screen.getByRole('option', {
+      name: 'Entfernung: nächste zuerst',
+    })
+
+    expect(nearestOption).toBeDisabled()
+
+    await fireEvent.click(screen.getByRole('switch', { name: 'Nach Umkreis filtern' }))
+    expect(nearestOption).toBeEnabled()
+
+    await fireEvent.update(screen.getByLabelText('Sortierung'), 'farthest')
+    await fireEvent.click(screen.getByRole('button', { name: 'Filter anwenden' }))
+
+    expect(emitted().apply?.[0]).toEqual([
+      {
+        sort: 'farthest',
+        latitude: 50.9375,
+        longitude: 6.9603,
+        radiusKm: 5,
+      },
+    ])
+  })
+
+  it('restores address sorting when location filtering is disabled', async () => {
+    render(StationFilters)
+    const locationSwitch = screen.getByRole('switch', {
+      name: 'Nach Umkreis filtern',
+    })
+    const sortSelect = screen.getByLabelText('Sortierung')
+
+    await fireEvent.click(locationSwitch)
+    await fireEvent.update(sortSelect, 'nearest')
+    await fireEvent.click(locationSwitch)
+
+    expect(sortSelect).toHaveValue('asc')
+  })
+
   it('clears the controls and requests the complete list', async () => {
     const { emitted } = render(StationFilters)
 

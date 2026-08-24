@@ -55,7 +55,9 @@ Combine street search, sorting, and radius filtering:
 GET /api/stations?search=Bonner&sort=asc&lat=50.94&lng=6.96&radius=5
 ```
 
-The allowed radii are 2, 5, and 10 kilometres. See
+Address sorting supports `asc` and `desc`. With a location filter, use
+`nearest` or `farthest` to sort by calculated distance. The allowed radii are
+2, 5, and 10 kilometres. See
 `backend/docs/station-api.md` for the complete contract.
 
 ## Backend logging

@@ -62,7 +62,7 @@ export function buildStationListQuery(
     conditions.push(`lower(address) LIKE lower($${values.length}) ESCAPE '!'`);
   }
 
-  const sortDirection = filters.sort === "desc" ? "DESC" : "ASC";
+  const orderBy = buildOrderBy(filters.sort);
 
   return {
     text: `
@@ -75,10 +75,23 @@ export function buildStationListQuery(
         ${distanceExpression} AS distance_km
       FROM stations
       WHERE ${conditions.join("\n        AND ")}
-      ORDER BY lower(address) ${sortDirection}, id ${sortDirection}
+      ORDER BY ${orderBy}
     `,
     values,
   };
+}
+
+function buildOrderBy(sort: StationListFilters["sort"]): string {
+  if (sort === "nearest") {
+    return "distance_km ASC, lower(address) ASC, id ASC";
+  }
+
+  if (sort === "farthest") {
+    return "distance_km DESC, lower(address) ASC, id ASC";
+  }
+
+  const direction = sort === "desc" ? "DESC" : "ASC";
+  return `lower(address) ${direction}, id ${direction}`;
 }
 
 export class PostgresStationRepository implements StationRepository {
