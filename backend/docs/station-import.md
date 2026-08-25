@@ -1,7 +1,6 @@
 # Station Import Reference
 
-This document explains the live-data synchronization implemented on the
-`feature/station-import` branch.
+This document explains the live-data synchronization.
 
 ## Purpose
 
@@ -69,10 +68,17 @@ After building the backend, run the compiled production job with:
 npm run stations:import:prod
 ```
 
-A successful run prints a summary such as:
+A successful run writes a structured summary such as:
 
-```text
-Station import 1 succeeded. Fetched: 122. Upserted: 122. Deactivated: 0.
+```json
+{
+  "level": 30,
+  "runId": "…",
+  "fetchedCount": 122,
+  "upsertedCount": 122,
+  "deactivatedCount": 0,
+  "msg": "Station import succeeded"
+}
 ```
 
 ## Processing flow
@@ -234,5 +240,6 @@ Second run: 122 fetched, 122 upserted, 0 deactivated
 Final table: 122 total, 122 active, 122 unique external IDs
 ```
 
-The next application feature can read these synchronized records through an
-Express endpoint with street search, sorting, and radius filters.
+The Express station endpoint reads these synchronized records and supports
+street search, address sorting, radius filters, and nearest or farthest distance
+sorting.

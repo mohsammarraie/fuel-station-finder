@@ -1,7 +1,7 @@
 # Database Setup Reference
 
-This document explains the database foundation implemented on the
-`feature/database-setup` branch of the Fuel Station Finder project.
+This document explains the database foundation of the Fuel Station Finder
+project.
 
 ## Scope
 
@@ -42,6 +42,7 @@ fuel-station-finder/
 |-- backend/
 |   |-- .env.example
 |   |-- package.json
+|   |-- docs/
 |   `-- src/
 |       |-- database/
 |       |   |-- client.ts
@@ -49,6 +50,7 @@ fuel-station-finder/
 |       |   |-- seed.ts
 |       |   |-- migrations/
 |       |   |   |-- 001-create-stations.ts
+|       |   |   |-- 002-add-station-import-tracking.ts
 |       |   |   `-- types.ts
 |       |   `-- seeds/
 |       |       `-- example-stations.ts
@@ -382,7 +384,8 @@ After the workflow has run on GitHub for the first time, the `Backend` and
 `Frontend` jobs should be configured as required status checks in the branch
 protection rules for `main`.
 
-## Next feature
+## Related application features
 
-The next feature can add the station-list API with address search, ascending or
-descending sorting, and 2/5/10-kilometre radius filters.
+The station-list API reads the imported records and supports address search,
+ascending or descending address sorting, 2/5/10-kilometre radius filters, and
+nearest or farthest distance sorting within the selected radius.
