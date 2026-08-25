@@ -1,7 +1,6 @@
 # Station API Reference
 
-This document describes the station-list endpoint implemented on the
-`feature/station-api` branch.
+This document describes the station-list endpoint.
 
 ## Endpoint
 
