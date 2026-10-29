@@ -12,7 +12,7 @@ Fragestellungen.
 | Aktualität der Daten                               | Wiederholbarer Import mit Upsert, Importhistorie und sicherer Deaktivierung fehlender Datensätze; tägliche Ausführung als Betriebsvorschlag | [Datenimport](../backend/docs/station-import.md)       |
 | Vollständige Tankstellenliste                      | `GET /api/stations` ohne Filter                                                                                                             | [API-Referenz](../backend/docs/station-api.md)         |
 | Umkreisfilter um eine frei wählbare Position       | Validierte Koordinaten mit 2, 5 oder 10 km Radius über PostGIS                                                                              | [API-Referenz](../backend/docs/station-api.md)         |
-| Vue.js-Frontend                                    | Listenansicht mit Lade-, Leer- und Fehlerzuständen                                                                                          | [Frontend-Liste](../frontend/docs/station-list.md)     |
+| Angular-Frontend                                    | Listenansicht mit Lade-, Leer- und Fehlerzuständen                                                                                          | [Frontend-Liste](../frontend/docs/station-list.md)     |
 | Suche nach Straßennamen                            | Groß-/kleinschreibungsunabhängige Teiltextsuche                                                                                             | [Frontend-Filter](../frontend/docs/station-filters.md) |
 | Auf- und absteigende Sortierung                    | Adresssortierung A–Z und Z–A                                                                                                                | [Frontend-Filter](../frontend/docs/station-filters.md) |
 | Zusätzliche Entfernungssortierung                  | Nächste oder weiteste Tankstelle zuerst innerhalb des gewählten Radius                                                                      | [Frontend-Filter](../frontend/docs/station-filters.md) |
@@ -31,7 +31,7 @@ rechnen:
 | Analyse, Projektaufbau und Datenmodell                                 | 1–2 Stunden |
 | PostgreSQL/PostGIS, Migrationen und Datenimport                        | 3–4 Stunden |
 | Express-Endpoint, Validierung und räumliche Filter                     | 2–3 Stunden |
-| Vue-Oberfläche, Suche, Adress-/Entfernungssortierung und Umkreisfilter | 3–4 Stunden |
+| Angular-Oberfläche, Suche, Adress-/Entfernungssortierung und Umkreisfilter | 3–4 Stunden |
 | Tests, CI, Logging und Dokumentation                                   | 3–4 Stunden |
 
 Die Schätzung umfasst eine reviewfähige Lösung mit Fehlerbehandlung und Tests,
@@ -115,7 +115,7 @@ Eine einfache produktive Architektur könnte so aussehen:
 ```text
 Browser
    |
-CDN / statisches Vue-Frontend
+CDN / statisches Angular-Frontend
    |
 HTTPS / Reverse Proxy
    |
@@ -131,7 +131,7 @@ Ein konkretes Referenzdeployment ließe sich beispielsweise vollständig auf
 
 | Komponente | Render-Dienst | Konfiguration |
 | --- | --- | --- |
-| Vue-Frontend | [Static Site](https://render.com/docs/static-sites) | Root-Verzeichnis `frontend`, Build `npm ci && npm run build`, Publish-Verzeichnis `dist` |
+| Angular-Frontend | [Static Site](https://render.com/docs/static-sites) | Root-Verzeichnis `frontend`, Build `npm ci && npm run build`, Publish-Verzeichnis `dist/browser` |
 | Express-API | [Web Service](https://render.com/docs/web-services) | Root-Verzeichnis `backend`, Build `npm ci && npm run build`, Start `npm start`, Health Check `/api/health` |
 | Datenbank | [Render Postgres](https://render.com/docs/postgresql) | Interne `DATABASE_URL`; die Migration aktiviert die unterstützten Erweiterungen PostGIS und `pg_trgm` |
 | Datenimport | [Cron Job](https://render.com/docs/cronjobs) | Root-Verzeichnis `backend`, Build wie die API, Zeitplan `0 3 * * *` (täglich 03:00 Uhr UTC), Kommando `npm run stations:import:prod` |
@@ -162,7 +162,7 @@ Produktionskonfiguration.
 ## Bewusste Abgrenzungen
 
 - Eine Karte ist für die geforderte Listenansicht nicht notwendig.
-- Ein globaler Vue Store wäre bei einer einzelnen Seite ohne geteilten
+- Ein globaler State Store wäre bei einer einzelnen Seite ohne geteilten
   Routenzustand zusätzliche Komplexität.
 - Die API ist in Markdown dokumentiert; Swagger UI ist bei einem fachlichen
   Endpoint optional.

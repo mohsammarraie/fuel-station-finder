@@ -1,11 +1,11 @@
 # Fuel Station Finder
 
-Vue and Express application for finding fuel stations, backed by PostgreSQL and
+Angular and Express application for finding fuel stations, backed by PostgreSQL and
 PostGIS.
 
 ## Prerequisites
 
-- Node.js 24
+- Node.js 24.15 or newer (run `nvm use` to select the pinned version)
 - npm
 - Docker with Docker Compose
 
@@ -93,7 +93,9 @@ npm run build
 
 ## Frontend development
 
-With the backend running on port `3000`, start the Vue development server:
+The Angular 22 CLI requires Node.js `^22.22.3`, `^24.15.0`, or `>=26.0.0`.
+
+With the backend running on port `3000`, start the Angular development server:
 
 ```bash
 cd frontend
@@ -101,14 +103,14 @@ npm ci
 npm run dev
 ```
 
-Vite forwards `/api` requests to the backend. The frontend displays active
+The Angular development server forwards `/api` requests to the backend. The frontend displays active
 stations with loading, empty, and retryable error states. Street search,
 address sorting, optional 2/5/10-kilometre radius filtering, and nearest or
 farthest distance sorting are available through the filter form. See
-`frontend/docs/station-list.md` and `frontend/docs/station-filters.md` for
-details.
+`frontend/docs/station-list.md`, `frontend/docs/station-filters.md`, and
+`frontend/docs/angular-migration.md` for details and a guided tour of the Angular features.
 
-Open `http://localhost:5173` in a browser.
+Open `http://localhost:4200` in a browser.
 
 Frontend checks run with:
 
@@ -141,6 +143,7 @@ settings before enforcing pull-request merges.
 | Backend | [Station import](backend/docs/station-import.md) | ArcGIS synchronization, validation, freshness and import tracking |
 | Backend | [Station API](backend/docs/station-api.md) | Endpoint parameters, responses, validation and geographic queries |
 | Backend | [Logging](backend/docs/logging.md) | Structured request logs, request IDs and configuration |
-| Frontend | [Frontend overview](frontend/README.md) | Vue development and build commands |
+| Frontend | [Frontend overview](frontend/README.md) | Angular development and build commands |
 | Frontend | [Station list](frontend/docs/station-list.md) | List components, UI states, styling and tests |
 | Frontend | [Station filters](frontend/docs/station-filters.md) | Search, radius filtering, address/distance sorting and accessibility |
+| Frontend | [Angular migration](frontend/docs/angular-migration.md) | Modern Angular patterns and a request walkthrough |
