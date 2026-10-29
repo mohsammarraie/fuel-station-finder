@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "Express backend for the fuel station finder",
+  "description": "NestJS backend for the fuel station finder",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
@@ -19,16 +19,18 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "cors": "^2.8.6",
+    "@nestjs/common": "^12.3.2",
+    "@nestjs/core": "^12.3.2",
+    "@nestjs/platform-express": "^12.3.2",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1",
     "pg": "^8.23.0",
     "pino": "^10.3.1",
     "pino-http": "^11.0.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^26.2.0",
     "@types/pg": "^8.23.1",

@@ -1,47 +1,25 @@
-import express from "express";
-import cors from "cors";
+import "reflect-metadata";
+import { Module, type Type } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import type { INestApplication } from "@nestjs/common";
+import { HealthController } from "./controllers/health-controller.js";
+import { StationController } from "./controllers/station-controller.js";
+import { ApiExceptionFilter } from "./filters/api-exception.filter.js";
 import { requestLogger } from "./logger.js";
-import { createStationRouter } from "./routes/station-routes.js";
+import { PostgresStationRepository } from "./repositories/station-repository.js";
+import { StationService } from "./services/station-service.js";
 
-const app = express();
+@Module({
+  controllers: [HealthController, StationController],
+  providers: [PostgresStationRepository, StationService],
+})
+export class AppModule {}
 
-app.disable("x-powered-by");
-app.use(requestLogger);
-app.use(cors());
-app.use(express.json());
-
-app.get("/api/health", (_req, res) => {
-  res.json({
-    status: "ok",
-  });
-});
-
-app.use("/api/stations", createStationRouter());
-
-app.use((_req, res) => {
-  res.status(404).json({
-    error: {
-      code: "NOT_FOUND",
-      message: "The requested resource was not found.",
-    },
-  });
-});
-
-app.use(
-  (
-    error: unknown,
-    req: express.Request,
-    res: express.Response,
-    _next: express.NextFunction,
-  ) => {
-    req.log.error({ err: error }, "Unhandled request error");
-    res.status(500).json({
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "An unexpected error occurred.",
-      },
-    });
-  },
-);
-
-export default app;
+export async function createApp(module: Type<unknown> = AppModule): Promise<INestApplication> {
+  const app = await NestFactory.create(module, { logger: false });
+  app.getHttpAdapter().getInstance().disable("x-powered-by");
+  app.use(requestLogger);
+  app.enableCors();
+  app.useGlobalFilters(new ApiExceptionFilter());
+  return app;
+}

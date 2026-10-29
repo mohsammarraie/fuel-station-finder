@@ -1,3 +1,4 @@
+import { Injectable } from "@nestjs/common";
 import type { QueryConfig } from "pg";
 import { getDatabasePool } from "../database/client.js";
 import type { StationListFilters } from "../validators/station-query.js";
@@ -94,6 +95,7 @@ function buildOrderBy(sort: StationListFilters["sort"]): string {
   return `lower(address) ${direction}, id ${direction}`;
 }
 
+@Injectable()
 export class PostgresStationRepository implements StationRepository {
   async findAll(filters: StationListFilters): Promise<StationListItem[]> {
     const result = await getDatabasePool().query<StationListRow>(

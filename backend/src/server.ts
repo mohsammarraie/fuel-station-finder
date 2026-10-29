@@ -1,15 +1,18 @@
 import "dotenv/config";
-import app from "./app.js";
+import { createApp } from "./app.js";
 import { logger } from "./logger.js";
 
-const PORT = process.env.PORT ?? 3000;
+async function bootstrap(): Promise<void> {
+  const port = process.env.PORT ?? 3000;
 
-app.listen(PORT, (error) => {
-  if (error) {
-    logger.fatal({ err: error, port: PORT }, "Failed to start server");
+  try {
+    const app = await createApp();
+    await app.listen(port);
+    logger.info({ port }, "Server started");
+  } catch (error) {
+    logger.fatal({ err: error, port }, "Failed to start server");
     process.exitCode = 1;
-    return;
   }
+}
 
-  logger.info({ port: PORT }, "Server started");
-});
+void bootstrap();
