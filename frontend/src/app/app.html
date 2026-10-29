@@ -1,0 +1,52 @@
+<div class="app-shell bg-body-tertiary">
+  <app-header />
+  <main id="main-content" class="container py-4" tabindex="-1">
+    <app-station-filters
+      [disabled]="store.state().status === 'loading'"
+      (apply)="store.applyFilters($event)"
+      (resetFilters)="store.resetFilters()"
+    />
+    <section aria-labelledby="station-heading">
+      <p class="visually-hidden" aria-live="polite" aria-atomic="true">{{ store.resultAnnouncement() }}</p>
+      <div class="d-flex align-items-end justify-content-between gap-3 mb-4">
+        <div>
+          <p class="eyebrow">Standorte</p>
+          <h2 id="station-heading" class="fw-bold mb-0">Tankstellen</h2>
+        </div>
+        @if (store.state().status === 'success') {
+          <span class="badge rounded-pill text-bg-success px-3 py-2">{{ store.state().stations.length }} Treffer</span>
+        }
+      </div>
+      @switch (store.state().status) {
+        @case ('loading') {
+          <div class="state-card card border-0 shadow-sm p-4 d-flex flex-row align-items-center justify-content-center gap-3" role="status">
+            <span class="spinner-border text-success" aria-hidden="true"></span>
+            <div>
+              <h3 class="h6 fw-bold mb-1">Tankstellen werden geladen</h3>
+              <p class="text-body-secondary mb-0">Einen kleinen Moment bitte.</p>
+            </div>
+          </div>
+        }
+        @case ('error') {
+          <div class="alert alert-danger text-center py-4" role="alert">
+            <h3 class="h6 fw-bold">Die Tankstellen konnten nicht geladen werden.</h3>
+            <p>Prüfe die Verbindung und versuche es erneut.</p>
+            <button type="button" class="btn btn-success" (click)="store.retry()">Erneut versuchen</button>
+          </div>
+        }
+        @case ('empty') {
+          <div class="state-card card border-0 shadow-sm p-4 text-center">
+            <h3 class="h6 fw-bold mb-1">Keine Tankstellen gefunden</h3>
+            <p class="text-body-secondary mb-0">Für diese Auswahl wurden keine Tankstellen gefunden.</p>
+          </div>
+        }
+        @case ('success') {
+          <app-station-list [stations]="store.state().stations" />
+        }
+      }
+    </section>
+  </main>
+  <footer class="border-top">
+    <p class="container py-4 mb-0 small text-body-secondary">Fuel Station Finder · Datenquelle: Stadt Köln</p>
+  </footer>
+</div>

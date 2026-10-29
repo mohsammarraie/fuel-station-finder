@@ -1,0 +1,57 @@
+<form class="filter-card card border-0 shadow-sm p-4 mb-5" [formGroup]="form" (ngSubmit)="submit()">
+  <fieldset class="border-0 p-0" [disabled]="disabled()">
+    <legend class="visually-hidden">Tankstellen filtern</legend>
+    <div class="row g-3 align-items-end">
+      <div class="col-12 col-md-7">
+        <label class="form-label fw-semibold" for="station-search">Straße suchen</label>
+        <input id="station-search" formControlName="search" class="form-control" type="search" maxlength="100" placeholder="z. B. Bonner" />
+      </div>
+      <div class="col-12 col-md-5">
+        <label class="form-label fw-semibold" for="station-sortierung">Sortierung</label>
+        <select id="station-sortierung" formControlName="sort" class="form-select">
+          <option value="asc">Straße aufsteigend (A–Z)</option>
+          <option value="desc">Straße absteigend (Z–A)</option>
+          <option value="nearest" [disabled]="!locationEnabled()">Entfernung: nächste zuerst</option>
+          <option value="farthest" [disabled]="!locationEnabled()">Entfernung: weiteste zuerst</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-check form-switch mt-4">
+      <input id="location-filter" formControlName="locationEnabled" class="form-check-input" type="checkbox" role="switch" />
+      <label class="form-check-label fw-semibold" for="location-filter">Nach Umkreis filtern</label>
+    </div>
+    @if (locationEnabled()) {
+      <fieldset class="border-0 p-0 mt-3">
+        <legend class="visually-hidden">Position und Suchradius</legend>
+        <div class="row g-3 align-items-end">
+          <div class="col-12 col-sm-4">
+            <label class="form-label" for="station-latitude">Breitengrad</label>
+            <input id="station-latitude" formControlName="latitude" class="form-control" type="number" min="-90" max="90" step="any" required />
+          </div>
+          <div class="col-12 col-sm-4">
+            <label class="form-label" for="station-longitude">Längengrad</label>
+            <input id="station-longitude" formControlName="longitude" class="form-control" type="number" min="-180" max="180" step="any" required />
+          </div>
+          <div class="col-12 col-sm-4">
+            <label class="form-label" for="station-radius">Radius</label>
+            <select id="station-radius" formControlName="radiusKm" class="form-select">
+              <option [ngValue]="2">2 km</option>
+              <option [ngValue]="5">5 km</option>
+              <option [ngValue]="10">10 km</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-outline-success btn-sm mt-3" type="button" [disabled]="locating()" (click)="useCurrentLocation()">
+          {{ locating() ? 'Standort wird ermittelt …' : 'Meinen Standort verwenden' }}
+        </button>
+        @if (locationError()) {
+          <p class="text-danger small mt-2 mb-0" role="alert">{{ locationError() }}</p>
+        }
+      </fieldset>
+    }
+    <div class="d-flex flex-wrap gap-2 mt-4">
+      <button class="btn btn-success" type="submit">Filter anwenden</button>
+      <button class="btn btn-outline-secondary" type="button" (click)="reset()">Zurücksetzen</button>
+    </div>
+  </fieldset>
+</form>
