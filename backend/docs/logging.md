@@ -1,7 +1,8 @@
 # Backend logging
 
-The backend uses Pino and `pino-http` for structured JSON logging. The same
-logger is shared by Express, database utilities, and the station import job.
+The backend uses Pino and `pino-http` for structured JSON logging. NestJS mounts
+the existing request logger as middleware, and the same logger is shared by
+database utilities and the station import job.
 
 ## Request logs
 

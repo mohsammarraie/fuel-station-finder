@@ -1,5 +1,6 @@
+import { Inject, Injectable } from "@nestjs/common";
 import type { PoolClient } from "pg";
-import type { CologneStationClient } from "../clients/cologne-station-client.js";
+import { CologneStationClient } from "../clients/cologne-station-client.js";
 import { getDatabasePool } from "../database/client.js";
 import { logger } from "../logger.js";
 
@@ -20,8 +21,9 @@ export interface StationImportSummary {
   completedAt: Date;
 }
 
+@Injectable()
 export class StationImportService {
-  constructor(private readonly sourceClient: CologneStationClient) {}
+  constructor(@Inject(CologneStationClient) private readonly sourceClient: CologneStationClient) {}
 
   async run(): Promise<StationImportSummary> {
     const client = await getDatabasePool().connect();

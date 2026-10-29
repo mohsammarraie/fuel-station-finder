@@ -1,15 +1,16 @@
-import type { RequestHandler } from "express";
-import type { StationRepository } from "../repositories/station-repository.js";
+import { BadRequestException, Controller, Get, Inject, Query } from "@nestjs/common";
+import { StationService } from "../services/station-service.js";
 import { stationQuerySchema } from "../validators/station-query.js";
 
-export function createListStationsHandler(
-  stationRepository: StationRepository,
-): RequestHandler {
-  return async (request, response, next) => {
-    const parsedQuery = stationQuerySchema.safeParse(request.query);
+@Controller("api/stations")
+export class StationController {
+  constructor(@Inject(StationService) private readonly stationService: StationService) {}
 
+  @Get()
+  async listStations(@Query() query: Record<string, unknown>) {
+    const parsedQuery = stationQuerySchema.safeParse(query);
     if (!parsedQuery.success) {
-      response.status(400).json({
+      throw new BadRequestException({
         error: {
           code: "INVALID_QUERY",
           message: "The station query parameters are invalid.",
@@ -19,20 +20,9 @@ export function createListStationsHandler(
           })),
         },
       });
-      return;
     }
 
-    try {
-      const stations = await stationRepository.findAll(parsedQuery.data);
-
-      response.json({
-        data: stations,
-        meta: {
-          count: stations.length,
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
+    const stations = await this.stationService.findAll(parsedQuery.data);
+    return { data: stations, meta: { count: stations.length } };
+  }
 }

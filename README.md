@@ -1,6 +1,6 @@
 # Fuel Station Finder
 
-Vue and Express application for finding fuel stations, backed by PostgreSQL and
+Vue and NestJS application for finding fuel stations, backed by PostgreSQL and
 PostGIS.
 
 ## Prerequisites
@@ -91,6 +91,10 @@ npm test
 npm run build
 ```
 
+The backend uses a NestJS module, controllers, and injectable services. See
+[Express-to-NestJS comparison](backend/docs/express-to-nest.md) for the before/after
+structure and the unchanged API contract.
+
 ## Frontend development
 
 With the backend running on port `3000`, start the Vue development server:
@@ -141,6 +145,7 @@ settings before enforcing pull-request merges.
 | Backend | [Station import](backend/docs/station-import.md) | ArcGIS synchronization, validation, freshness and import tracking |
 | Backend | [Station API](backend/docs/station-api.md) | Endpoint parameters, responses, validation and geographic queries |
 | Backend | [Logging](backend/docs/logging.md) | Structured request logs, request IDs and configuration |
+| Backend | [Express-to-NestJS comparison](backend/docs/express-to-nest.md) | Framework mapping and preserved behavior |
 | Frontend | [Frontend overview](frontend/README.md) | Vue development and build commands |
 | Frontend | [Station list](frontend/docs/station-list.md) | List components, UI states, styling and tests |
 | Frontend | [Station filters](frontend/docs/station-filters.md) | Search, radius filtering, address/distance sorting and accessibility |

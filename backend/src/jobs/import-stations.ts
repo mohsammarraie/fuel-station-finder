@@ -1,29 +1,16 @@
 import "dotenv/config";
-import { CologneStationClient } from "../clients/cologne-station-client.js";
+import "reflect-metadata";
+import { NestFactory } from "@nestjs/core";
+import type { INestApplicationContext } from "@nestjs/common";
 import { closeDatabasePool } from "../database/client.js";
 import { logger } from "../logger.js";
 import { StationImportService } from "../services/station-import-service.js";
+import { StationImportModule } from "./station-import.module.js";
 
-function readPageSize(value: string | undefined): number | undefined {
-  if (value === undefined) {
-    return undefined;
-  }
-
-  const pageSize = Number(value);
-
-  if (!Number.isInteger(pageSize) || pageSize < 1 || pageSize > 5_000) {
-    throw new Error("STATION_IMPORT_PAGE_SIZE must be an integer from 1 to 5000.");
-  }
-
-  return pageSize;
-}
-
+let app: INestApplicationContext | undefined;
 try {
-  const sourceClient = new CologneStationClient({
-    sourceUrl: process.env.STATION_SOURCE_URL,
-    pageSize: readPageSize(process.env.STATION_IMPORT_PAGE_SIZE),
-  });
-  const summary = await new StationImportService(sourceClient).run();
+  app = await NestFactory.createApplicationContext(StationImportModule, { logger: false });
+  const summary = await app.get(StationImportService).run();
 
   logger.info(
     {
@@ -38,5 +25,6 @@ try {
   logger.error({ err: error }, "Station import failed");
   process.exitCode = 1;
 } finally {
+  await app?.close();
   await closeDatabasePool();
 }
