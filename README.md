@@ -3,6 +3,20 @@
 Vue and Express application for finding fuel stations, backed by PostgreSQL and
 PostGIS.
 
+An independent Java 25 / Spring Boot 4.1 implementation of the same API is in
+[java-backend](java-backend/README.md). The existing Express backend remains the
+default; run either backend on port 3000 for the unchanged Vue frontend.
+
+To run the Java backend and PostGIS with Docker (no host Java or Maven needed):
+
+```bash
+docker compose up
+```
+
+Compose builds the backend image on the first run. The backend runs database migrations before serving the API. Open
+`http://localhost:3000/api/health`. See the [Java backend Docker guide](java-backend/README.md#docker-compose)
+for separate service commands and Apple Silicon notes.
+
 ## Prerequisites
 
 - Node.js 24
@@ -126,10 +140,11 @@ GitHub Actions runs the following checks for every pull request targeting
 - Backend dependency installation, tests, and TypeScript build
 - Database migration and repeatability check against PostGIS
 - Example-data seed and repeatability check
+- Java backend tests, Maven build, PostGIS migration/API smoke checks, and Docker image build
 - Frontend dependency installation, tests, and production build
 
-The workflow is defined in `.github/workflows/ci.yml`. Configure the `Backend`
-and `Frontend` jobs as required status checks in the GitHub branch-protection
+The workflow is defined in `.github/workflows/ci.yml`. Configure the `Backend`,
+`Java Backend`, and `Frontend` jobs as required status checks in the GitHub branch-protection
 settings before enforcing pull-request merges.
 
 ## Documentation

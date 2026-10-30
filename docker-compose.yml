@@ -1,6 +1,7 @@
 services:
   database:
     image: postgis/postgis:17-3.5
+    platform: linux/amd64
     environment:
       POSTGRES_DB: fuel_station_finder
       POSTGRES_USER: fuel_station
@@ -14,6 +15,20 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  java-backend:
+    build:
+      context: ./java-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/fuel_station_finder
+      SPRING_DATASOURCE_USERNAME: fuel_station
+      SPRING_DATASOURCE_PASSWORD: fuel_station
+    ports:
+      - "3000:3000"
+    depends_on:
+      database:
+        condition: service_healthy
 
 volumes:
   postgres_data:

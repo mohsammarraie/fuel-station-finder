@@ -71,6 +71,67 @@ jobs:
       - name: Verify repeatable seed
         run: npm run db:seed
 
+  java-backend:
+    name: Java Backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: java-backend
+    env:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/fuel_station_finder
+      SPRING_DATASOURCE_USERNAME: fuel_station
+      SPRING_DATASOURCE_PASSWORD: fuel_station
+    services:
+      database:
+        image: postgis/postgis:17-3.5
+        env:
+          POSTGRES_DB: fuel_station_finder
+          POSTGRES_USER: fuel_station
+          POSTGRES_PASSWORD: fuel_station
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U fuel_station -d fuel_station_finder"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+          cache-dependency-path: java-backend/pom.xml
+
+      - name: Test and package Java backend
+        run: mvn --batch-mode clean verify
+
+      - name: Apply database migrations
+        run: mvn --batch-mode spring-boot:run -Dspring-boot.run.profiles=ci '-Dspring-boot.run.arguments=--spring.main.web-application-type=none --app.command=migrate'
+
+      - name: Verify repeatable migrations
+        run: mvn --batch-mode spring-boot:run -Dspring-boot.run.profiles=ci '-Dspring-boot.run.arguments=--spring.main.web-application-type=none --app.command=migrate'
+
+      - name: Seed example stations
+        run: mvn --batch-mode spring-boot:run -Dspring-boot.run.profiles=ci '-Dspring-boot.run.arguments=--spring.main.web-application-type=none --app.command=seed'
+
+      - name: Check API against PostGIS
+        run: |
+          set -euo pipefail
+          java -jar target/fuel-station-java-backend-1.0.0-SNAPSHOT.jar --spring.profiles.active=ci > /tmp/fuel-station-java-api.log 2>&1 &
+          api_pid=$!
+          trap 'kill "$api_pid" 2>/dev/null || true' EXIT
+          curl --retry 20 --retry-delay 1 --retry-connrefused -fsS http://localhost:3000/api/health | python3 -c 'import json,sys; assert json.load(sys.stdin) == {"status": "ok"}'
+          curl -fsS 'http://localhost:3000/api/stations?search=Bonner' | python3 -c 'import json,sys; data=json.load(sys.stdin); assert data["meta"]["count"] > 0; assert all("Bonner" in station["address"] for station in data["data"])'
+
+      - name: Build Docker image
+        run: docker build -t fuel-station-java-backend:ci .
+
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
